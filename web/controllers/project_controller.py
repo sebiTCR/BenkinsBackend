@@ -1,6 +1,7 @@
-from sqlalchemy import select, delete
+from flask import request
+from sqlalchemy import select, delete, update
 from persistance.database import db
-from persistance.models import Project
+from persistance.models import Project, BuildStatus
 
 
 def get_project(id):
@@ -54,8 +55,15 @@ def create_project(data: dict):
     return {"status": True}
 
 
-def update_project_param(param, id, val):
+def  update_project_param(param, id, val):
     return "Unimplemented"
+
+
+def set_project_build_status(id: int, status_code: int):
+    q = update(Project).where(Project.id == id).values(status=status_code)
+    db.session.execute(q)
+    db.session.commit()
+    return f"updated Project {id}"
 
 
 def delete_project(id: int):
