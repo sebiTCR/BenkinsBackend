@@ -4,6 +4,20 @@ from persistance.database import db
 from persistance.models import Project, BuildStatus
 
 
+def get_projects():
+    data = []
+
+    for entry in db.session.query(Project).all():
+        data.append({
+            "id": entry.id,
+            "name": entry.name,
+            "version": entry.version,
+            "status": entry.status
+        })
+
+    return data
+
+
 def get_project(id):
     data = db.session.get(Project, id)
     if data == None:

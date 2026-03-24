@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<HTML xmlns="http://www.w3.org/1999/html">
+    <head>
+        <link rel="stylesheet" href="../static/modern.css"/>
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+        <script>
+            function get_building_code(code){
+                switch (code){
+                    case 0:
+                        return "NONE"
+                        break
+
+                    case 1:
+                        return "SUCCESS"
+                        break
+
+                    case 2:
+                        return "BUILDING"
+                        break
+
+                    case 3:
+                        return "FAILED"
+                        break
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <h1>Projects</h1>
+        <br>
+
+        <div class="project_container">
+            {% for project in projects%}
+            <div class="project_entry flex justify-around">
+                <p><b> {{project.name}} </b></p>
+
+                <div class="flex flex-col">
+                    <p><b>Build Status</b></p>
+                    <p>{{project.status}}</p>
+                </div>
+
+                <div class="flex flex-col">
+                    <button onclick="alert('building')">Build</button>
+                    <button>Remove</button>
+                </div>
+            </div>
+            {% endfor %}
+
+            <button class="create_button">Create new project</button>
+        </div>
+    </body>
+</HTML>
