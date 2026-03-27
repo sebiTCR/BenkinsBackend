@@ -1,3 +1,6 @@
+import os
+from dataclasses import asdict
+
 from flask import request
 from sqlalchemy import select, delete, update
 from persistance.database import db
@@ -8,27 +11,17 @@ def get_projects():
     data = []
 
     for entry in db.session.query(Project).all():
-        data.append({
-            "id": entry.id,
-            "name": entry.name,
-            "version": entry.version,
-            "status": entry.status
-        })
+        data.append(asdict(entry))
 
     return data
 
 
 def get_project(id):
-    data = db.session.get(Project, id)
-    if data == None:
+    data: Project = db.session.get(Project, id)
+    if data is None:
         return None
 
-    return {
-        "id": data.id,
-        "name": data.name,
-        "version": data.version,
-        "status": data.status
-    }
+    return data
 
 
 def get_project_by_name(name: str):
@@ -38,12 +31,7 @@ def get_project_by_name(name: str):
     if data is None:
         return None
 
-    return {
-        "id": data.id,
-        "name": data.name,
-        "version": data.version,
-        "status": data.status
-    }
+    return data
 
 
 def project_exists(name: str):
@@ -56,13 +44,11 @@ def project_exists(name: str):
 
 
 def create_project(data: dict):
-    proj = Project()
     if  project_exists(data["name"]):
         return {"status": False, "message": "Project exists!"}
 
-    proj.name = data["name"]
-    proj.status = 0
-    proj.version = data["version"]
+    project_path = os.getenv("REPO_PATH")
+    proj = Project(name=data["name"], version=data["version"], status=0, path=project_path)
 
     db.session.add(proj)
     db.session.commit()
@@ -74,6 +60,12 @@ def  update_project_param(param, id, val):
 
 
 def set_project_build_status(id: int, status_code: int):
+    """
+    Updates the build status of a project
+    :param id: Project ID
+    :param status_code: Build Code (NONE=0, SUCCESS=1, BUILDING=2, FAILED=3)
+    :return:
+    """
     q = update(Project).where(Project.id == id).values(status=status_code)
     db.session.execute(q)
     db.session.commit()
