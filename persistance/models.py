@@ -27,10 +27,3 @@ class Project(Base):
         status: Mapped[int] = mapped_column()
 
         # def __init__(self, name=None, version=None, status: int = 0):
-
-class persoane(Base):
-    __tablename__ = "persoane"
-
-    cnp: Mapped[int] = mapped_column(primary_key=True)
-    nume: Mapped[str] = mapped_column(String(30))
-    prenume: Mapped[str] = mapped_column(String(30))
