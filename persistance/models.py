@@ -26,4 +26,10 @@ class Project(Base):
         # status: Mapped[Enum] = mapped_column(Enum("NONE", "SUCESS", "BUILDING", "FAILED", name="status_enum", create_type=True))
         status: Mapped[int] = mapped_column()
 
-        # def __init__(self, name=None, version=None, status: int = 0):
+
+class Build(MappedAsDataclass, Base):
+    __tablename__ = "builds"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    project_id: Mapped[int] = mapped_column(ForeignKey("project.id"))
+    version: Mapped[str] = mapped_column()
+    file_path: Mapped[str] = mapped_column()
