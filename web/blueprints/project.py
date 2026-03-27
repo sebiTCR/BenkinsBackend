@@ -2,9 +2,13 @@ from flask import Blueprint, request, jsonify
 from persistance.database import db
 from persistance.models import Project
 
-from web.controllers.project_controller import get_project, create_project, update_project_param, delete_project, set_project_build_status
+from web.controllers.project_controller import *
 
 project_bp = Blueprint('project_bp', __name__)
+
+@project_bp.route('/all', methods=["GET"])
+def list_projects():
+    return get_projects()
 
 @project_bp.route('/<id>', methods=["GET", "POST", "DELETE"])
 def project_methods(id: int):
