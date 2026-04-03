@@ -14,7 +14,6 @@ class BuildStatus:
     FAILED=3
 
 
-
 class Base(DeclarativeBase):
     pass
 
@@ -26,6 +25,7 @@ class Project(MappedAsDataclass, Base):
         id: Mapped[int] = mapped_column(init=False, primary_key=True)
         name: Mapped[str] = mapped_column(String(30))
         version: Mapped[str] = mapped_column(String(10))
+        type: Mapped[str] = mapped_column(String(10))
         status: Mapped[int] = mapped_column()
         path: Mapped[str] = mapped_column()
 
