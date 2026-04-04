@@ -24,6 +24,7 @@ class Project(MappedAsDataclass, Base):
         builds: Mapped[List["Build"]] = relationship(init=False)
         id: Mapped[int] = mapped_column(init=False, primary_key=True)
         name: Mapped[str] = mapped_column(String(30))
+        repo: Mapped[str] = mapped_column(String(50))
         version: Mapped[str] = mapped_column(String(10))
         type: Mapped[str] = mapped_column(String(10))
         status: Mapped[int] = mapped_column()

@@ -1,8 +1,8 @@
 from colored import Fore, Back, Style
 
 
-def debug(message):
-    print(f'{Fore.grey_100} {Back.grey_15} DEBUG {Style.reset} {message} ')
+def debug(message, file=""):
+    print(f'{Fore.grey_100}{Back.grey_15} DEBUG [{file}] {Style.reset} {message} ')
 
 
 def info(message):

@@ -1,10 +1,11 @@
 import os
 from dataclasses import asdict
-
-from flask import request
 from sqlalchemy import select, delete, update
+
+from builder.builder import Builder
 from persistance.database import db
 from persistance.models import Project, BuildStatus
+from core import log, fs
 
 
 def get_projects():
@@ -42,17 +43,26 @@ def project_exists(name: str):
         return False
     return True
 
-
+# TODO: Move cloning into a new thread!
 def create_project(data: dict):
     if  project_exists(data["name"]):
         return {"status": False, "message": "Project exists!"}
 
-    project_path = os.getenv("REPO_PATH")
-    proj = Project(name=data["name"], version=data["version"], status=0, path=project_path)
+    repo_url = data["repo_url"]
+    repo_name = fs.get_repo_name(repo_url)
+    project_path = f"{os.getenv('REPO_PATH')}/{repo_name}"
+    p = Project(name=data["name"], version='0', status=0, path=project_path, type="", repo=repo_url)
 
-    db.session.add(proj)
+    if(not os.path.exists(project_path)):
+        os.makedirs(project_path)
+    fs.clone_repo(repo_url, project_path)
+
+    b = Builder(p)
+    log.debug(f"Cloning {data['repo_url']}", file=__name__)
+
+    db.session.add(p)
     db.session.commit()
-    return {"status": True}
+    return {"status": True, "data": asdict(p)}
 
 
 def  update_project_param(param, id, val):
