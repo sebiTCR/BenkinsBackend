@@ -4,7 +4,7 @@ from web.blueprints.project import project_bp
 from dotenv import load_dotenv
 from web.blueprints.frontend import frontend_bp
 from web.blueprints.build import build_bp
-
+import core.scheduler.scheduler as scheduler
 
 app = Flask(__name__, template_folder='./web/templates', static_folder='./web/static')
 CORS(app, resources={r"/project/*": {"origins": ["http://localhost:3000", "http://localhost:5173"]}})
