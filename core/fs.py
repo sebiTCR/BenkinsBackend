@@ -8,7 +8,7 @@ def get_latest_tag(path: str):
     Get the lastest tag from a repository
     """
     repo = Repo(path)
-    return sorted(repo.tags, key= lambda t: t.commit.committed_datetime)
+    return sorted(repo.tags, key= lambda t: t.commit.committed_datetime)[-1]
 
 
 def clone_repo(url: str, path: str = None) -> Repo:
