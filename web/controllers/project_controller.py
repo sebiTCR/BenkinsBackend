@@ -45,7 +45,6 @@ def project_exists(name: str):
         return False
     return True
 
-# TODO: Move cloning into a new thread!
 def create_project(data: dict):
     if  project_exists(data["name"]):
         return {"status": False, "message": "Project exists!"}
