@@ -1,11 +1,11 @@
 import os
+import time
 from dataclasses import asdict
 from sqlalchemy import select, delete, update
 
-from builder.builder import Builder
-from core.scheduler.tasks import CloneTask, SetupTask
+from core.scheduler.tasks import CloneTask, SetupTask, BuildTask
 from persistance.database import db
-from persistance.models import Project, BuildStatus
+from persistance.models import Project
 from core import log, fs
 from core.scheduler.scheduler import scheduler
 
@@ -45,6 +45,7 @@ def project_exists(name: str):
         return False
     return True
 
+
 def create_project(data: dict):
     if  project_exists(data["name"]):
         return {"status": False, "message": "Project exists!"}
@@ -60,7 +61,6 @@ def create_project(data: dict):
 
     scheduler.register_task(CloneTask(p))
     scheduler.register_task(SetupTask(p))
-    p.version = fs.get_latest_tag(project_path).name
 
     db.session.add(p)
     db.session.commit()
@@ -84,8 +84,29 @@ def set_project_build_status(id: int, status_code: int):
     return f"updated Project {id}"
 
 
+def set_latest_version(id: int, version: str):
+    q = update(Project).where(Project.id == id).values(version=version)
+    db.session.execute(q)
+    db.session.commit()
+
+
 def delete_project(id: int):
     q = delete(Project).where(Project.id == id)
     db.session.execute(q)
     db.session.commit()
     return f"deleted {id}"
+
+
+def _version_poll_worker():
+    log.info("Starting version poll worker...")
+    while True:
+        for p in get_projects():
+            log.info(f"Checking {p['path']}")
+            latest_version = fs.get_latest_tag(p['path'])
+            if p["version"] != latest_version:
+                proj = get_project(p["id"])
+                scheduler.register_task(BuildTask(proj))
+        time.sleep(int(os.getenv("VERSION_POLL_TIME")))
+
+
+scheduler.register_independent_task(_version_poll_worker)
