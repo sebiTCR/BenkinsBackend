@@ -10,7 +10,7 @@ def info(message):
 
 
 def warn(message):
-    print(f'{Fore.grey_15}{Back.light_yellow} INFO {Style.reset} {message} ')
+    print(f'{Fore.grey_15}{Back.light_yellow} WARN {Style.reset} {message} ')
 
 
 def error(message):
