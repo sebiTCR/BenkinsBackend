@@ -65,6 +65,8 @@ def _compile_build(project: Project) -> (bool, str):
     """
 
     builder = Builder(f"{os.getenv("REPO_PATH")}/{project.id}/")
+    builder.compile()
+
     #TODO: Actually compile the project
     return (True, f"{os.getenv("REPO_PATH")}/{project.id}/")
 
