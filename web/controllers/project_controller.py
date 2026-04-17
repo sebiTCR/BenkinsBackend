@@ -112,7 +112,7 @@ def _version_poll_worker():
         time.sleep(int(os.getenv("VERSION_POLL_TIME")))
 
 
-def initialzie():
+def initialize():
     global _initialized
     if _initialized:
         return

@@ -17,7 +17,7 @@ app.register_blueprint(build_bp, url_prefix="/build")
 
 app.register_blueprint(frontend_bp, url_prefix="/app")
 
-project_controller.initialzie()
+project_controller.initialize()
 
 @app.route('/')
 def root():
