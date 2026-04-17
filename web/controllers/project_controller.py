@@ -10,6 +10,9 @@ from core import log, fs
 from core.scheduler.scheduler import scheduler
 
 
+_initialized = False
+
+
 def get_projects():
     data = []
 
@@ -101,7 +104,7 @@ def _version_poll_worker():
     log.info("Starting version poll worker...")
     while True:
         for p in get_projects():
-            log.info(f"Checking {p['path']}")
+            log.debug(f"Checking {p['path']}")
             latest_version = fs.get_latest_tag(p['path'])
             if p["version"] != latest_version.name:
                 proj = get_project(p["id"])
@@ -110,4 +113,8 @@ def _version_poll_worker():
 
 
 def initialzie():
+    global _initialized
+    if _initialized:
+        return
+    _initialized = True
     scheduler.register_independent_task(_version_poll_worker)
