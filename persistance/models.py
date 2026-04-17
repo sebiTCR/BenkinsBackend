@@ -1,7 +1,9 @@
 from tokenize import String
+from typing import List
+from dataclasses import dataclass
 
-from sqlalchemy import (String, Enum)
-from sqlalchemy.orm import DeclarativeBase, Mapped
+from sqlalchemy import (String, Enum, ForeignKey,)
+from sqlalchemy.orm import DeclarativeBase, Mapped, relationship, MappedAsDataclass
 from sqlalchemy.testing.schema import mapped_column
 
 
@@ -12,25 +14,26 @@ class BuildStatus:
     FAILED=3
 
 
-
 class Base(DeclarativeBase):
     pass
 
 
-class Project(Base):
+class Project(MappedAsDataclass, Base):
         __tablename__ = "project"
 
-        id: Mapped[int] = mapped_column(primary_key=True)
+        builds: Mapped[List["Build"]] = relationship(init=False)
+        id: Mapped[int] = mapped_column(init=False, primary_key=True)
         name: Mapped[str] = mapped_column(String(30))
+        repo: Mapped[str] = mapped_column(String(50))
         version: Mapped[str] = mapped_column(String(10))
-        # status: Mapped[Enum] = mapped_column(Enum("NONE", "SUCESS", "BUILDING", "FAILED", name="status_enum", create_type=True))
+        type: Mapped[str] = mapped_column(String(10))
         status: Mapped[int] = mapped_column()
+        path: Mapped[str] = mapped_column()
 
-        # def __init__(self, name=None, version=None, status: int = 0):
 
-class persoane(Base):
-    __tablename__ = "persoane"
-
-    cnp: Mapped[int] = mapped_column(primary_key=True)
-    nume: Mapped[str] = mapped_column(String(30))
-    prenume: Mapped[str] = mapped_column(String(30))
+class Build(MappedAsDataclass, Base):
+    __tablename__ = "builds"
+    id: Mapped[int] = mapped_column(init=False, primary_key=True)
+    project_id: Mapped[int] = mapped_column(ForeignKey("project.id"))
+    version: Mapped[str] = mapped_column()
+    file_path: Mapped[str] = mapped_column()

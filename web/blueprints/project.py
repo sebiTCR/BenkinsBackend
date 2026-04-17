@@ -1,8 +1,9 @@
+from dataclasses import asdict
+
 from flask import Blueprint, request, jsonify
 from persistance.database import db
 from persistance.models import Project
-
-from web.controllers.project_controller import *
+from web.controllers.project_controller import (get_projects, create_project, get_project, update_project_param, delete_project, set_project_build_status)
 
 project_bp = Blueprint('project_bp', __name__)
 
@@ -14,7 +15,7 @@ def list_projects():
 def project_methods(id: int):
     match request.method:
         case 'GET':
-            return get_project(id)
+            return asdict(get_project(id))
 
         case 'POST':
             return update_project_param(Project.name, id, "")
@@ -35,5 +36,5 @@ def update_status(id):
 
 @project_bp.route("/", methods=["POST"])
 def create_project_r():
-    data = request.get_json()
+    data: dict = request.get_json()
     return create_project(data)

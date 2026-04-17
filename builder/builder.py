@@ -2,61 +2,68 @@ import os.path
 import subprocess
 
 import builder.compilers as compilers
+import core.fs
 from builder.lexer import Lexer
+from core import log, fs
+from persistance.models import Project
 
 
 class Builder:
-    lexer = None
+    """
+    Builder class. Configures a project from the *project.bk* file. Contains a lexer that parses the config file, storing
+    the settings inside the database for late use.
+    """
+
     compiler: compilers.Compiler = None
+    _project: Project = None
     _initialized: bool = False
 
-    metadata: dict[str, str] = {
-        "NAME": "My Project",
-        "VERSION": "1.2.6",
-        "PROJECT_TYPE": "NONE",
-        "REPO": "https://your-repo.com/project.git",
-    }
 
-    def __init__(self, path):
-        if(os.path.isfile(path + 'project.bk') == False):
-            print(f"project.bk was not found in {path + 'project.bk'}")
-            return
+    def __init__(self, project: Project):
+        """
+        Initialize the builder in an existing repository.
+        :param path: Repository path. Make sure the path ends with "/".
+        """
+        path = project.path
 
-        self.metadata["PATH"] = path
-        self.project_path = path
-        self.lexer = Lexer(self.metadata)
+        if(os.path.isfile(path + '/project.bk') == False):
+            log.warn(f"project.bk was not found in {path + '/project.bk'}. Using implied specs")
 
-
-    def compile(self):
-        self.compiler.compile()
-
-
-    def setup(self):
-        self.lexer.parse_file()
-        self.compiler = self._set_compiler(self.lexer.get_project_type(), self.project_path)
+        self._project = project
+        self.compiler = self._set_compiler(project.type, path)
         self.compiler.setup()
 
 
-    """
-    Clones a github repo
-    """
-    def fetch(self, repo: str):
-        subprocess.run(['git', 'clone', repo, self.project_path])
+    def compile(self):
+        return self.compiler.compile()
 
-    """
-    Selects the right compiler based on the PROJECT_TYPE variable
-    :return Compiler object
-    """
+
+    def fetch(self, repo: str):
+        """
+        Checks a repo for updates
+        .. deprecated:: 1.0.0
+        :param repo: Repo URL
+        """
+        fs.clone_repo(self._project.repo, self._project.path)
+
+
     def _set_compiler(self, project_type: str,  project_path: str) -> compilers.Compiler:
+        """
+        Selects the right compiler based on the PROJECT_TYPE variable
+        :param project_type
+        :param project_path
+        :return: Compiler object
+        """
         c: compilers.Compiler = compilers.Compiler(project_path)
         project_type = project_type.upper()
 
         match project_type:
             case "MESON":
                 c = compilers.Meson(project_path)
+            case "KICAD":
+                c= compilers.KicadCompiler(project_path)
             case _:
-                print(f'ERR: Unknown project type "{project_type}"!')
-                print("Currently using the default compiler (that doesn't do any shit)")
-
+                log.error(f'Unknown project type "{project_type} for {self._project.name}"!')
+                log.warn("Currently using the default compiler (that doesn't do any shit)")
+        log.debug(f"Setting compiler for {self._project.name} to {project_type}", file=__file__)
         return c
-

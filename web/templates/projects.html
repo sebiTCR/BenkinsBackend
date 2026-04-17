@@ -4,7 +4,6 @@
         <link rel="stylesheet" href="../static/modern.css"/>
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
-
     </head>
     <body>
         <h1>Projects</h1>
@@ -13,7 +12,10 @@
         <div class="project_container">
             {% for project in projects%}
             <div class="project_entry flex justify-around">
-                <p><b> {{project.name}} </b></p>
+                <div class="flex flex-col">
+                    <p><b> {{project.name}} </b></p>
+                    <p class="text-[#EFF8E25a]"><b> {{project.path}} </b></p>
+                </div>
 
                 <div class="flex flex-col">
                     <p><b>Build Status</b></p>
@@ -40,9 +42,19 @@
 
                 </div>
 
+<!--                Download option-->
+                <div class="flex flex-col">
+                    <h1><b>Builds</b></h1>
+                    <select>
+                        {%for build in project.builds%}
+                            <option>{{build.version}}</option>
+                        {%endfor%}
+                    </select>
+                </div>
+
                 <div class="flex flex-col">
                     <button onclick="alert('building')">Build</button>
-                    <button>Remove</button>
+                    <button onclick="redirect('/home')">Download</button>
                 </div>
             </div>
             {% endfor %}
