@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from web.blueprints.frontend import frontend_bp
 from web.blueprints.build import build_bp
 import core.scheduler.scheduler as scheduler
+from web.controllers import project_controller
 
 app = Flask(__name__, template_folder='./web/templates', static_folder='./web/static')
 CORS(app, resources={r"/project/*": {"origins": ["http://localhost:3000", "http://localhost:5173"]}})
@@ -16,6 +17,7 @@ app.register_blueprint(build_bp, url_prefix="/build")
 
 app.register_blueprint(frontend_bp, url_prefix="/app")
 
+project_controller.initialzie()
 
 @app.route('/')
 def root():

@@ -103,10 +103,11 @@ def _version_poll_worker():
         for p in get_projects():
             log.info(f"Checking {p['path']}")
             latest_version = fs.get_latest_tag(p['path'])
-            if p["version"] != latest_version:
+            if p["version"] != latest_version.name:
                 proj = get_project(p["id"])
                 scheduler.register_task(BuildTask(proj))
         time.sleep(int(os.getenv("VERSION_POLL_TIME")))
 
 
-scheduler.register_independent_task(_version_poll_worker)
+def initialzie():
+    scheduler.register_independent_task(_version_poll_worker)

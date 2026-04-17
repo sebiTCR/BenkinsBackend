@@ -41,7 +41,6 @@ class KicadCompiler(Compiler):
     def setup(self):
         if not os.path.exists(f"{self._project_path}/build"):
             os.mkdir(f"{self._project_path}/build")
-        self._run_drc_checks()
 
 
     def compile(self) -> (bool, list):
