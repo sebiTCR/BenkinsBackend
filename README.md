@@ -28,7 +28,7 @@ pip install -r requirements.txt
 
 4. Start the backend:
 ```bash
-python app.py
+flask run
 ```
 
 5. Access it via http://localhost:5000
@@ -36,4 +36,5 @@ python app.py
 > The frontend is used just for previewing already-existing projects. 
 > For now, the communication will be made through a REST client
 
-## 
+## Final Note
+This project was made as a final project for the Programming Languages (3) Course at Uni.
