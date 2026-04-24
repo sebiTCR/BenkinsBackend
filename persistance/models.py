@@ -2,7 +2,7 @@ from tokenize import String
 from typing import List
 from dataclasses import dataclass
 
-from sqlalchemy import (String, Enum, ForeignKey,)
+from sqlalchemy import (String, Enum, ForeignKey, JSON )
 from sqlalchemy.orm import DeclarativeBase, Mapped, relationship, MappedAsDataclass
 from sqlalchemy.testing.schema import mapped_column
 
@@ -32,8 +32,16 @@ class Project(MappedAsDataclass, Base):
 
 
 class Build(MappedAsDataclass, Base):
-    __tablename__ = "builds"
+    __tablename__ = "build"
     id: Mapped[int] = mapped_column(init=False, primary_key=True)
     project_id: Mapped[int] = mapped_column(ForeignKey("project.id"))
     version: Mapped[str] = mapped_column()
     file_path: Mapped[str] = mapped_column()
+    logs: Mapped[List["Log"]] = relationship(init=False)
+
+
+class Log(MappedAsDataclass, Base):
+    __tablename__ = "log"
+    id: Mapped[int] = mapped_column(init=False, primary_key=True)
+    build_id: Mapped[int] = mapped_column(ForeignKey("build.id"))
+    contents: Mapped[dict] = mapped_column(JSON)

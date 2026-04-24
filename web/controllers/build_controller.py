@@ -1,11 +1,11 @@
 from flask import send_file
 from pygments.lexers import data
-from sqlalchemy import select
+from sqlalchemy import select, delete
 
-from persistance.models import Build, Project
+from persistance.models import Build, Project, Log
 from persistance.database import db
 
-def create_new_build(project: Project, version: str, path: str):
+def create_new_build(project: Project, version: str, path: str, logs: dict = None):
     build: Build = None
 
     if get_build_by_version(version):
@@ -13,6 +13,10 @@ def create_new_build(project: Project, version: str, path: str):
 
     build = Build(project_id=project.id, version=version, file_path=path)
     db.session.add(build)
+    db.session.flush()
+
+    log = Log(build_id=build.id, contents=logs or {})
+    db.session.add(log)
     db.session.commit()
 
     return {"Status": True, "Message": "Build queued!"}
@@ -52,4 +56,6 @@ def get_build_by_version(version: str):
 
 
 def delete_build(project_id, project_version):
-    db.session.delete(Build).where(Build.version == project_version and Build.project_id == project_id)
+    q = delete(Build).where(Build.version == project_version, Build.project_id == project_id)
+    db.session.execute(q)
+    db.session.commit()
