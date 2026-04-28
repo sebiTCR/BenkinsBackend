@@ -1,0 +1,27 @@
+components/project/status_code.jinja
+{#
+    def status: int = 0
+#}
+
+<div class="flex flex-col">
+    <p><b>Build Status</b></p>
+    <b>
+
+        {%if status == 0%}
+            <p class="color-[#EFF8E25a]">NONE</p>
+        {% endif %}
+
+        {%if status == 1%}
+            <p class="text-[#00A878]">SUCCESS</p>
+        {% endif %}
+
+        {%if status == 2%}
+            <p class="text-[#B68F40]">BUILDING</p>
+        {% endif %}
+
+        {%if status == 3%}
+            <p class="text-[#E03616]">FAILED</p>
+        {% endif %}
+
+    </b>
+</div>
