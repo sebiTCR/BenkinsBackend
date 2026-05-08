@@ -42,7 +42,8 @@ class Builder:
         .. deprecated:: 1.0.0
         :param repo: Repo URL
         """
-        fs.clone_repo(self._project.repo, self._project.path)
+        status, r = fs.clone_repo(self._project.repo, self._project.path)
+        return status
 
 
     def _set_compiler(self, project_type: str,  project_path: str) -> compilers.Compiler:

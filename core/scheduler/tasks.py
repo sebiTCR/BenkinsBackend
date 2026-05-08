@@ -24,8 +24,15 @@ class CloneTask(Task):
 
     def run(self):
         log.debug(f"Cloning {self.url} to {self.path}", file=__class__)
-        clone_repo(self.url, self.path)
-        project_controller.set_latest_version(self._project.id, get_latest_tag(self.path).name)
+        status, repo = clone_repo(self.url, self.path)
+        if status:
+            tag = get_latest_tag(self.path)
+            if tag:
+                project_controller.set_latest_version(self._project.id, tag.name)
+            else:
+                log.warning(f"No tags found for {self.url} even after cloning")
+        else:
+            log.error(f"[SCHEDULER] Failed to clone {self.url}")
 
 
 class SetupTask(Task):
@@ -56,11 +63,15 @@ class BuildTask(Task):
         status, log =  b.compile()
 
         if status:
-            tag: TagReference = get_latest_tag(self._project.path)
-            project_controller.set_project_build_status(self._project.id, 3)
-            project_controller.set_latest_version(self._project.id, tag.name)
-            get_scheduler().register_task(PackageTask(self._project))
-            build_controller.create_new_build(self._project, version=tag.name, path = f"{build_path}/{tag.name}.zip", logs=log)
+            tag = get_latest_tag(self._project.path)
+            if tag:
+                project_controller.set_project_build_status(self._project.id, 3)
+                project_controller.set_latest_version(self._project.id, tag.name)
+                get_scheduler().register_task(PackageTask(self._project))
+                build_controller.create_new_build(self._project, version=tag.name, path = f"{build_path}/{tag.name}.zip", logs=log)
+            else:
+                log.error(f"Build successful but no tags found for {self._project.name}")
+                project_controller.set_project_build_status(self._project.id, 1)
             return
         project_controller.set_project_build_status(self._project.id, 1)
 
