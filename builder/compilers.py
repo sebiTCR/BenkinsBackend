@@ -57,6 +57,7 @@ class KicadCompiler(Compiler):
             ext = f.split(".")[-1]
             if ext == suffix:
                 pcb = f
+                break
         if pcb is None:
             log.error(f"No *.{suffix} file was found in {self._project_path}!")
             return ""

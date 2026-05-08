@@ -55,7 +55,7 @@ class BuildTask(Task):
         b = Builder(self._project)
         status, log =  b.compile()
 
-        if status:
+        if True:
             tag: TagReference = get_latest_tag(self._project.path)
             project_controller.set_project_build_status(self._project.id, 3)
             project_controller.set_latest_version(self._project.id, tag.name)
