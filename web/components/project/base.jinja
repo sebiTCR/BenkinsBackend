@@ -1,0 +1,33 @@
+{#css http://localhost:5000/static/modern.css #}
+{#def projects=[] #}
+{#js https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4 #}
+{#js http://localhost:5000/static/project.js  #}
+
+{{ catalog.render_assets() }}
+
+<div>
+<h1>Projects</h1>
+<br>
+    <div class="flex flex-row h-full justify-around">
+        <div class="project_container">
+            {% for project in projects%}
+                <Project.Entry project={{project}}/>
+            {% endfor %}
+
+            <button class="create_button">Create new project</button>
+        </div>
+        {% if selected_project != null %}
+        <Project.Details project={{selected_project}}/>
+        {% endif %}
+    </div>
+</div>
+
+
+<script>
+    var selected_project = null;
+    var selected_build = null;
+
+    function select_project(project){
+        selected_project = project;
+    }
+</script>

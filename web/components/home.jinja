@@ -1,4 +1,6 @@
-{#css modern.css, static/modern.css http://localhost:5000/static/modern.css #}
+{#css http://localhost:5000/static/modern.css #}
+
+{{ catalog.render_assets() }}
 
 <div>
     <h1>Benkins</h1>
@@ -7,11 +9,15 @@
     </br>
 
     <div class="WARNING">
-        <b>DEPRECATION NOTE!</b> This frontend will be deprecated in favor of a separate FE project!
-        Some features (like log viewing, build status and build download) will not be available!
+        <b>IN ACTIVE DEVEOLPMENT!</b><br/>
+        Stuff may work, stuff may not. Fuck around and find out.
+
     </div>
 
     <h2> Golden Pages </h2>
-    <li><p><a href="/app/projects">Projects</a></p></li>
-    <li><p><a href="/app/About">About</a></p></li>
+    <ul>
+        <li><p><a href="/app/projects">Projects</a></p></li>
+        <li><p><a href="/app/About">About</a></p></li>
+    </ul>
+
 </div>

@@ -22,3 +22,4 @@ class Renderer:
 
 
 renderer = Renderer()
+catalog = None

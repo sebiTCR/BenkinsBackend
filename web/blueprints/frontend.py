@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template
 
+import web.components.renderer as renderer
 from web.controllers.project_controller import get_projects
 
 frontend_bp = Blueprint('frontend_bp', __name__)
@@ -7,9 +8,9 @@ frontend_bp = Blueprint('frontend_bp', __name__)
 
 @frontend_bp.route('/projects')
 def home():
-    return render_template('projects.html', projects=get_projects())
+    return renderer.catalog.render('project.base', projects=get_projects())
 
 @frontend_bp.route('/')
 def root():
-    return render_template("index.html")
+    return renderer.render_component("home", renderer=renderer)
 

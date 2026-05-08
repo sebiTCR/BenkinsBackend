@@ -1,12 +1,10 @@
-components/project/status_code.jinja
-{#
-    def status: int = 0
-#}
+{#def status = 0#}
+{{ catalog.render_assets() }}
+
 
 <div class="flex flex-col">
     <p><b>Build Status</b></p>
     <b>
-
         {%if status == 0%}
             <p class="color-[#EFF8E25a]">NONE</p>
         {% endif %}
