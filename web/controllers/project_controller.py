@@ -3,6 +3,7 @@ import time
 from dataclasses import asdict
 from sqlalchemy import select, delete, update
 
+from core.fs import clone_repo
 from core.scheduler.tasks import CloneTask, SetupTask, BuildTask
 from persistance.database import db
 from persistance.models import Project
@@ -104,7 +105,8 @@ def _version_poll_worker():
     log.info("Starting version poll worker...")
     while True:
         for p in get_projects():
-            log.debug(f"Checking {p['path']}")
+            log.debug(f"Checking {p['path']}", file=__name__)
+            clone_repo(p["repo"], p["path"])
             latest_version = fs.get_latest_tag(p['path'])
             if p["version"] != latest_version.name:
                 proj = get_project(p["id"])
