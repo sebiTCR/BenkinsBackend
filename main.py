@@ -6,11 +6,14 @@ from dotenv import load_dotenv
 from web.blueprints.frontend import frontend_bp
 from web.blueprints.build import build_bp
 from web.controllers import project_controller
+from persistance.database import run_migrations
 
 app = Flask(__name__, template_folder='./web/templates', static_folder='./web/static')
 CORS(app, resources={r"/project/*": {"origins": ["http://localhost:3000", "http://localhost:5173"]}})
 # app.register_blueprint(frontend_bp)
 load_dotenv()
+
+run_migrations()
 
 app.register_blueprint(project_bp,  url_prefix="/project")
 app.register_blueprint(build_bp, url_prefix="/build")
